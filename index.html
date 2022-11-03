@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="generator" content="Wowchemy 5.4.0 for Hugo"/>
+    <meta name="theme-color" content="#ffffff">
+    <title>handwriting.js | Chen-Yu Ho</title>
+    <style>
+        .ita-hwt-candidates {
+            border: 1px solid rgb(204, 204, 204);
+            background: #fff;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .ita-hwt-candidate {
+            display: inline-block;
+            white-space: nowrap;
+            height: 32px;
+            line-height: 24px;
+            padding: 6px 18px 3px 18px;
+            border-right: 1px solid rgb(204, 204, 204);
+            font-family: arial, verdana, sans-serif;
+            font-size: small;
+            color: #222;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   "
+      data-wc-page-id="6f08c9f31e3648f857ebfdc594deaa43">
+<h2 id="demo">Demo</h2>
+<div>
+  <span style="display : inline-block">
+    PenSize <span id="lineWidth">2</span><input type="range" id="penSize" min="1" max="30" value="2">
+    <br>
+    <canvas id="canvas" width="400" height="400" style="border: 2px solid; cursor: crosshair;"></canvas>
+    <br>
+    <form>
+      Language:
+      <select id="language">
+        <option value="zh_TW" selected="selected">Chinese</option>
+        <option value="ja">Japanese</option>
+        <option value="en">English</option>
+      </select>
+    </form>
+    <br>
+    <button onclick="canvas.erase();">Erase</button>
+    <button onclick="
+      var e = document.getElementById('language');
+      canvas.setOptions({language: e.options[e.selectedIndex].value});
+      canvas.recognize();
+    ">Send</button>
+    <button onclick="canvas.undo()">Undo</button>
+    <button onclick="canvas.redo()">Redo</button>
+    <br>
+    result:
+      <div id="result" class="ita-hwt-candidates" tabindex="-1" style="user-select: none;">
+
+      </div>
+  </span>
+    <script type="text/javascript" src="handwriting.canvas.js"></script>
+    <script type="text/javascript" defer>
+        var canvas               = new handwriting.Canvas(document.getElementById('canvas'), 3);
+        var width                = document.getElementById("demo").clientWidth
+        canvas.cxt.canvas.width  = width < 400 ? width : 400;
+        canvas.cxt.canvas.height = width < 400 ? width : 400;
+        canvas.setCallBack(function (data, err) {
+            let lists='';
+            if (err) throw err;
+            else
+                data.forEach((list) => {
+                    lists += `<div onclick="setText(this)" class="ita-hwt-candidate ita-hwt-candidate-hover">${list}</div>`
+                })
+            document.getElementById("result").innerHTML = lists;
+            console.log(data, 'data');
+        });
+        canvas.set_Undo_Redo(true, true);
+        var penSize = document.getElementById("penSize");
+        penSize.addEventListener("mousemove", function () {
+            document.getElementById("lineWidth").innerHTML = penSize.value;
+        });
+        penSize.addEventListener("change", function () {
+            canvas.setLineWidth(penSize.value);
+        });
+        const setText = (e) => {
+            console.log(e.innerText, 'text.value')
+        }
+    </script>
+</div>
+
+</body>
+</html>
+
